@@ -13,15 +13,20 @@ import { copycat } from '@snaplet/copycat'
 
 
 const seed = await createSeedClient({
-  dryRun: process.env.DRY !== '0',
-});
-
-// Clears all existing data in the database, but keep the structure
-await seed.$resetDatabase()
-
-
-// This will create 3 records in the users table
-// it reads users times(x) 3
-await seed.users(x => x(3))
-
-// Run it with: DRY=0 npx tsx seed.mts
+    dryRun: process.env.DRY !== '0'
+  });
+  
+  await seed.$resetDatabase()
+  
+  await seed.posts([
+    {
+      title: 'Hello World!',
+      author: {
+        email: (ctx) =>
+          copycat.email(ctx.seed, {
+            domain: 'acme.org',
+          }),
+      },
+      comments: (x) => x(3),
+    },
+  ]);

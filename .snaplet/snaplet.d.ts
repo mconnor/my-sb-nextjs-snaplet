@@ -38,6 +38,13 @@ interface Table_storage_buckets {
   allowed_mime_types: string[] | null;
   owner_id: string | null;
 }
+interface Table_public_comment {
+  id: string;
+  content: string;
+  author_id: string;
+  post_id: string;
+  written_at: string;
+}
 interface Table_auth_flow_state {
   id: string;
   user_id: string | null;
@@ -145,6 +152,12 @@ interface Table_storage_objects {
   version: string | null;
   owner_id: string | null;
 }
+interface Table_public_post {
+  id: string;
+  title: string;
+  content: string;
+  author_id: string;
+}
 interface Table_auth_refresh_tokens {
   instance_id: string | null;
   id: number;
@@ -179,6 +192,11 @@ interface Table_auth_saml_relay_states {
 }
 interface Table_auth_schema_migrations {
   version: string;
+}
+interface Table_supabase_migrations_schema_migrations {
+  version: string;
+  statements: string[] | null;
+  name: string | null;
 }
 interface Table_vault_secrets {
   id: string;
@@ -215,6 +233,11 @@ interface Table_auth_sso_providers {
   resource_id: string | null;
   created_at: string | null;
   updated_at: string | null;
+}
+interface Table_public_user {
+  id: string;
+  username: string;
+  email: string;
 }
 interface Table_auth_users {
   instance_id: string | null;
@@ -294,7 +317,9 @@ interface Schema_pgsodium_masks {
 
 }
 interface Schema_public {
-
+  comment: Table_public_comment;
+  post: Table_public_post;
+  user: Table_public_user;
 }
 interface Schema_realtime {
 
@@ -307,6 +332,9 @@ interface Schema_storage {
 interface Schema_supabase_functions {
   hooks: Table_supabase_functions_hooks;
   migrations: Table_supabase_functions_migrations;
+}
+interface Schema_supabase_migrations {
+  schema_migrations: Table_supabase_migrations_schema_migrations;
 }
 interface Schema_vault {
   secrets: Table_vault_secrets;
@@ -325,6 +353,7 @@ interface Database {
   realtime: Schema_realtime;
   storage: Schema_storage;
   supabase_functions: Schema_supabase_functions;
+  supabase_migrations: Schema_supabase_migrations;
   vault: Schema_vault;
 }
 interface Extension {
@@ -340,6 +369,15 @@ interface Tables_relationships {
     };
     children: {
        objects_bucketId_fkey: "storage.objects";
+    };
+  };
+  "public.comment": {
+    parent: {
+       comment_post_id_fkey: "public.post";
+       comment_author_id_fkey: "public.user";
+    };
+    children: {
+
     };
   };
   "auth.flow_state": {
@@ -397,6 +435,14 @@ interface Tables_relationships {
     };
     children: {
 
+    };
+  };
+  "public.post": {
+    parent: {
+       post_author_id_fkey: "public.user";
+    };
+    children: {
+       comment_post_id_fkey: "public.comment";
     };
   };
   "auth.refresh_tokens": {
@@ -457,6 +503,15 @@ interface Tables_relationships {
        saml_providers_sso_provider_id_fkey: "auth.saml_providers";
        saml_relay_states_sso_provider_id_fkey: "auth.saml_relay_states";
        sso_domains_sso_provider_id_fkey: "auth.sso_domains";
+    };
+  };
+  "public.user": {
+    parent: {
+
+    };
+    children: {
+       comment_author_id_fkey: "public.comment";
+       post_author_id_fkey: "public.post";
     };
   };
   "auth.users": {

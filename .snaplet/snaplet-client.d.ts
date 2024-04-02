@@ -53,6 +53,18 @@ type Override = {
       objects?: string;
     };
   }
+  comment?: {
+    name?: string;
+    fields?: {
+      id?: string;
+      content?: string;
+      author_id?: string;
+      post_id?: string;
+      written_at?: string;
+      post?: string;
+      user?: string;
+    };
+  }
   flow_state?: {
     name?: string;
     fields?: {
@@ -208,6 +220,17 @@ type Override = {
       buckets?: string;
     };
   }
+  post?: {
+    name?: string;
+    fields?: {
+      id?: string;
+      title?: string;
+      content?: string;
+      author_id?: string;
+      user?: string;
+      comment?: string;
+    };
+  }
   refresh_tokens?: {
     name?: string;
     fields?: {
@@ -253,10 +276,18 @@ type Override = {
       sso_providers?: string;
     };
   }
-  schema_migrations?: {
+  auth_schema_migrations?: {
     name?: string;
     fields?: {
       version?: string;
+    };
+  }
+  supabase_migrations_schema_migrations?: {
+    name?: string;
+    fields?: {
+      version?: string;
+      statements?: string;
+      name?: string;
     };
   }
   secrets?: {
@@ -313,6 +344,16 @@ type Override = {
       saml_providers?: string;
       saml_relay_states?: string;
       sso_domains?: string;
+    };
+  }
+  user?: {
+    name?: string;
+    fields?: {
+      id?: string;
+      username?: string;
+      email?: string;
+      comment?: string;
+      post?: string;
     };
   }
   users?: {
@@ -396,6 +437,11 @@ export interface Fingerprint {
     fileSizeLimit?: FingerprintNumberField;
     objects?: FingerprintRelationField;
   }
+  comments?: {
+    writtenAt?: FingerprintDateField;
+    post?: FingerprintRelationField;
+    author?: FingerprintRelationField;
+  }
   flowStates?: {
     createdAt?: FingerprintDateField;
     updatedAt?: FingerprintDateField;
@@ -461,6 +507,10 @@ export interface Fingerprint {
     metadata?: FingerprintJsonField;
     bucket?: FingerprintRelationField;
   }
+  posts?: {
+    author?: FingerprintRelationField;
+    comments?: FingerprintRelationField;
+  }
   refreshTokens?: {
     id?: FingerprintNumberField;
     createdAt?: FingerprintDateField;
@@ -479,7 +529,10 @@ export interface Fingerprint {
     flowState?: FingerprintRelationField;
     ssoProvider?: FingerprintRelationField;
   }
-  schemaMigrations?: {
+  authSchemaMigrations?: {
+
+  }
+  supabaseMigrationsSchemaMigrations?: {
 
   }
   secrets?: {
@@ -508,7 +561,11 @@ export interface Fingerprint {
     samlRelayStates?: FingerprintRelationField;
     ssoDomains?: FingerprintRelationField;
   }
-  users?: {
+  publicUsers?: {
+    authoredComments?: FingerprintRelationField;
+    authoredPosts?: FingerprintRelationField;
+  }
+  authUsers?: {
     emailConfirmedAt?: FingerprintDateField;
     invitedAt?: FingerprintDateField;
     confirmationSentAt?: FingerprintDateField;
